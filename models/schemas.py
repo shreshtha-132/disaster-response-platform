@@ -8,17 +8,17 @@ class GeoPoint(BaseModel):
 
 class DisasterCreate(BaseModel):
     title:str
-    location_name: Optional[str]
+    location_name: Optional[str]=None
     description:str
     tags:List[str]
     owner_id:str
 
 class DisasterUpdate(BaseModel):
-    title: Optional[str]
-    location_name: Optional[str]
-    description:Optional[str]
-    tags:Optional[List[str]]
-    owner_id:Optional[str]
+    title: Optional[str]=None
+    location_name: Optional[str]=None
+    description:Optional[str]=None
+    tags:Optional[List[str]]=None
+    owner_id:Optional[str]=None
 
 
 class ResourceCreate(BaseModel):
@@ -30,15 +30,15 @@ class ResourceCreate(BaseModel):
     disaster_id: UUID
     name: str
     location_name: str
-    location: Optional[GeoPoint]
+    location: Optional[GeoPoint]=None
     type: Optional[str]
 
 
 class ResourceUpdate(BaseModel):
-    name: Optional[str]
-    location_name: Optional[str]
-    location: Optional[GeoPoint]
-    type: Optional[str]
+    name: Optional[str]=None
+    location_name: Optional[str]=None
+    location: Optional[GeoPoint]=None
+    type: Optional[str]=None
 
 
 

@@ -230,14 +230,10 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 
 ---
 
-## 🧭 What’s Pending (Work Plan)
-
 ### 📦 1. Push to GitHub (Version Control)
 - [ ] Initialize Git repo (if not done)
 - [ ] Push working code to GitHub
 - [ ] Add `.gitignore`, `README.md`, and `requirements.txt`
-
----
 
 ### 🧪 2. Testing
 - [ ] Add unit tests using `pytest` for:
@@ -247,7 +243,7 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 - [ ] Use `pytest-asyncio` for async endpoints
 - [ ] Mock external API calls (Gemini, HTTPX)
 
----
+## 🧭 What’s Pending (Work Plan)
 
 ### 🔁 3. CI/CD (via GitHub Actions)
 - [ ] Create `.github/workflows/test.yml`

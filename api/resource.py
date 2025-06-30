@@ -9,7 +9,13 @@ router = APIRouter()
 
 @router.post("/resources")
 async def add_resource(resource: ResourceCreate):
-    data = dict(resource)
+    data = {
+    "disaster_id": str(resource.disaster_id),  # ✅ Fix here
+    "name": resource.name,
+    "location_name": resource.location_name,
+    "location": None,  # filled below
+    "type": resource.type
+    }
     existing = supabase.table("disasters").select("id").eq("id", str(resource.disaster_id)).single().execute()
     if not existing.data:
         raise HTTPException(status_code=404,detail="Disaster Not Found")
@@ -27,7 +33,7 @@ async def add_resource(resource: ResourceCreate):
 def get_resources_by_disaster_id(disaster_id:UUID):
     # this endpont would fetch all the resources using the disaster id
     response = supabase.table("resources").select("*").eq("disaster_id",str(disaster_id)).execute()
-    if response.error:
+    if not response.data:
         raise HTTPException(status_code=500,detail="Error Fetching resources")
     return {"Resources":response.data}
 
@@ -56,7 +62,7 @@ async def get_resources_by_name(location_name:str):
     #fetch all resources for this ids
 
     response = supabase.table("resources").select("*").in_("disaster_id",disaster_ids).execute()
-    if response.error:
+    if not response.data:
         raise HTTPException(status_code=500,detail="Error Fetching resources")
     return {"Resources":response.data}
 
