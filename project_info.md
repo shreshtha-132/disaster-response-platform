@@ -243,13 +243,20 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 - [ ] Use `pytest-asyncio` for async endpoints
 - [ ] Mock external API calls (Gemini, HTTPX)
 
-## 🧭 What’s Pending (Work Plan)
-
 ### 🔁 3. CI/CD (via GitHub Actions)
 - [ ] Create `.github/workflows/test.yml`
   - Run lint (`flake8`)
   - Run tests (`pytest`)
 - [ ] Auto-deploy to Render from GitHub
+
+### 🌐 5. Deployment
+- [ ] Deploy Backend on **Render**
+  - Add Supabase + Gemini keys
+  - Add Render build & start commands
+
+## 🧭 What’s Pending (Work Plan)
+
+
 
 ---
 
@@ -262,9 +269,6 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 ---
 
 ### 🌐 5. Deployment
-- [ ] Deploy Backend on **Render**
-  - Add Supabase + Gemini keys
-  - Add Render build & start commands
 - [ ] Deploy Frontend (if created) on **Vercel**
 - [ ] Test deployed APIs via Postman
 
