@@ -3,7 +3,9 @@ import httpx
 import os
 from services.cache import get_from_cache,set_in_cache
 
-client = genai.Client()
+GEMINI_API_KEY = os.environ.get("GOOGLE_API_KEY")
+
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 async def extract_location_with_gemini(description:str):
     key = f"loc:{description}"
