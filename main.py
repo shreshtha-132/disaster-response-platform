@@ -21,3 +21,7 @@ app.include_router(updates_router)
 app.include_router(verify_image_router)
 app.include_router(resource_router)
 
+@app.get("/")
+def root():
+    return {"Hello Welcome to Home"}
+
