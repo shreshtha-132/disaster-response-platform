@@ -32,9 +32,11 @@ async def add_resource(resource: ResourceCreate):
 @router.get("/resources/{disaster_id}/resources")
 def get_resources_by_disaster_id(disaster_id:UUID):
     # this endpont would fetch all the resources using the disaster id
+    check_disaster = supabase.table("disasters").select("id").eq("id", str(disaster_id)).single().execute()
+    if not check_disaster.data:
+        raise HTTPException(status_code=404, detail="Disaster not found")
+    
     response = supabase.table("resources").select("*").eq("disaster_id",str(disaster_id)).execute()
-    if not response.data:
-        raise HTTPException(status_code=500,detail="Error Fetching resources")
     return {"Resources":response.data}
 
 #get resource with the help of location_name

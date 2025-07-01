@@ -1,5 +1,13 @@
 import streamlit as st
 import requests
+import uuid
+
+def is_valid_uuid(u):
+    try:
+        uuid.UUID(u)
+        return True
+    except:
+        return False
 
 BACKEND_URL="https://disaster-response-platform-backend-k4qf.onrender.com"
 st.set_page_config(page_title="Disaster Response Platform", layout="centered")
@@ -24,46 +32,103 @@ if section == "Report Disaster":
 
     title = st.text_input("Disaster Title")
     description = st.text_area("Describe the situation")
-    tags = st.text_input("Tags (comma-separated)").split(",")
+    tags = st.text_input("Tags (comma-separated)")
     owner_id = st.text_input("Owner ID")
 
     if st.button("Submit Report"):
-        data = {
-            "title": title,
-            "description": description,
-            "tags": tags,
-            "owner_id": owner_id
-        }
-        res = requests.post(f"{BACKEND_URL}/disasters", json=data)
-        st.success(res.json())
+        if not title or not description:
+            st.warning("Title and Description are required.")
+        else:
+            tags = [t.strip() for t in tags.split(",") if t.strip()]
+            data = {
+                "title": title,
+                "description": description,
+                "tags": tags,
+                "owner_id": owner_id
+            }
+            with st.spinner("Reporting disaster..."):
+                try:
+                    res = requests.post(f"{BACKEND_URL}/disasters", json=data)
+                    res.raise_for_status()
+                    st.success("✅ Disaster reported successfully!")
+                    st.json(res.json())
+                except Exception as e:
+                    st.error(f"❌ Failed to report disaster: {e}")
 
 elif section == "Get All Disasters":
     st.subheader("📄 List of All Disasters")
-    res = requests.get(f"{BACKEND_URL}/disasters")
-    if res.ok:
-        for d in res.json()["disasters"]:
-            st.json(d)
+    try:
+        res = requests.get(f"{BACKEND_URL}/disasters")
+        res.raise_for_status()
+        disasters = res.json()["disasters"]
+
+        if not disasters:
+            st.info("No disasters reported yet.")
+        else:
+            for d in disasters:
+                with st.expander(f"{d['title']} — {d.get('location_name', 'Unknown')}"):
+                    st.markdown(f"**🆔 ID:** `{d['id']}`")
+                    st.markdown(f"**📍 Location:** {d.get('location_name', 'Unknown')}")
+                    st.markdown(f"**📝 Description:** {d['description']}")
+                    st.markdown(f"**🏷 Tags:** `{', '.join(d['tags'])}`")
+                    st.markdown(f"**👤 Owner ID:** `{d['owner_id']}`")
+                    st.markdown(f"**📅 Created:** `{d['created_at']}`")
+    except Exception as e:
+        st.error(f"Error fetching disasters: {str(e)}")
+
+
 
 elif section == "Update Disaster":
     st.subheader("🛠 Update Existing Disaster")
-    disaster_id = st.text_input("Disaster ID (UUID)")
+    new_title = st.text_input("✏️ New Title (optional)")
+    disaster_id = st.text_input("🆔 Disaster ID (UUID)")
     new_desc = st.text_area("New Description")
     owner_id = st.text_input("Updater Owner ID")
+    new_tags_input = st.text_input("🏷 New Tags (comma-separated, optional)")
 
-    if st.button("Update"):
-        data = {
-            "description": new_desc,
-            "owner_id": owner_id
-        }
-        res = requests.put(f"{BACKEND_URL}/disasters/{disaster_id}", json=data)
-        st.success(res.json())
+    if st.button("🔄 Update Disaster"):
+        if not disaster_id:
+            st.warning("Please enter a valid Disaster ID.")
+        else:
+            update_data = {}
+            if new_title:
+                update_data["title"] = new_title
+            if new_desc:
+                update_data["description"] = new_desc
+            if new_tags_input:
+                tags = [t.strip() for t in new_tags_input.split(",") if t.strip()]
+                update_data["tags"] = tags
+            if owner_id:
+                update_data["owner_id"] = owner_id
+
+            if not update_data:
+                st.info("No fields to update.")
+            else:
+                with st.spinner("Updating disaster..."):
+                    try:
+                        res = requests.put(f"{BACKEND_URL}/disasters/{disaster_id}", json=update_data)
+                        res.raise_for_status()
+                        st.success("✅ Disaster updated successfully!")
+                        st.json(res.json())
+                    except Exception as e:
+                        st.error(f"❌ Failed to update disaster: {e}")
 
 elif section == "Delete Disaster":
     st.subheader("❌ Delete Disaster by ID")
     disaster_id = st.text_input("Disaster ID (UUID)")
     if st.button("Delete Disaster"):
-        res = requests.delete(f"{BACKEND_URL}/disasters/{disaster_id}")
-        st.warning(res.json())
+        if not disaster_id:
+            st.warning("Please provide a valid Disaster ID.")
+        else:
+            try:
+                res = requests.delete(f"{BACKEND_URL}/disasters/{disaster_id}")
+                if res.ok:
+                    st.success(res.json().get("message", "Disaster deleted."))
+                    st.json(res.json())
+                else:
+                    st.error(res.json().get("detail", "Something went wrong."))
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 elif section == "Add Resource":
     st.subheader("➕ Add Resource to Disaster")
@@ -74,22 +139,52 @@ elif section == "Add Resource":
     type_ = st.text_input("Resource Type")
 
     if st.button("Add Resource"):
-        data = {
-            "disaster_id": disaster_id,
-            "name": name,
-            "location_name": location_name,
-            "type": type_
-        }
-        res = requests.post(f"{BACKEND_URL}/resources", json=data)
-        st.success(res.json())
+        if not (disaster_id and name and location_name and type_):
+            st.warning("Please fill all fields.")
+        elif not is_valid_uuid(disaster_id):
+            st.error("❌ Invalid Disaster ID. Please enter a valid UUID.")
+        else:
+            data = {
+                "disaster_id": disaster_id,
+                "name": name,
+                "location_name": location_name,
+                "type": type_
+            }
+            try:
+                res = requests.post(f"{BACKEND_URL}/resources", json=data)
+                if res.ok:
+                    st.success(res.json().get("message", "Resource added."))
+                    st.json(res.json())
+                else:
+                    st.error(res.json().get("detail", "Failed to add resource."))
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 
 elif section == "Resources by Disaster ID":
     st.subheader("🔎 Resources Linked to a Disaster")
-    disaster_id = st.text_input("Disaster ID")
+    disaster_id = st.text_input("Disaster ID (UUID)")
     if st.button("Fetch Resources"):
-        res = requests.get(f"{BACKEND_URL}/resources/{disaster_id}/resources")
-        st.json(res.json())
+        if not disaster_id:
+            st.warning("⚠️ Please enter a Disaster ID.")
+        elif not is_valid_uuid(disaster_id):
+            st.error("❌ Invalid UUID format for Disaster ID.")
+        else:
+            try:
+                res = requests.get(f"{BACKEND_URL}/resources/{disaster_id}/resources")
+                if res.ok:
+                    resources = res.json().get("Resources", [])
+                    if not resources:
+                        st.info("ℹ️ No resources found for this disaster.")
+                    else:
+                        st.success(f"✅ Found {len(resources)} resources.")
+                        for r in resources:
+                            with st.expander(r["name"]):
+                                st.json(r)
+                else:
+                    st.error(res.json().get("detail", "Failed to fetch resources."))
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 
 elif section == "Resources by Location":

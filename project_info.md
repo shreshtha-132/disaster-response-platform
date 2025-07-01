@@ -48,10 +48,10 @@ disaster-platform/
 
 ## 🔧 Step 3: Supabase Setup
 
-* Create project at [https://supabase.com](https://supabase.com)
-* Set up tables: `disasters`, `resources`, `reports`, `cache`
-* Enable PostGIS (geospatial extension)
-* Add geospatial indexes:
+- Create project at [https://supabase.com](https://supabase.com)
+- Set up tables: `disasters`, `resources`, `reports`, `cache`
+- Enable PostGIS (geospatial extension)
+- Add geospatial indexes:
 
 ```sql
 CREATE INDEX disasters_location_idx ON disasters USING GIST (location);
@@ -63,25 +63,25 @@ CREATE INDEX disasters_location_idx ON disasters USING GIST (location);
 
 ### 1. Disaster CRUD (`disaster.py`)
 
-* POST `/disasters` → calls Gemini to extract location + maps API for lat/lng
-* GET `/disasters?tag=flood`
-* PUT/DELETE `/disasters/:id`
+- POST `/disasters` → calls Gemini to extract location + maps API for lat/lng
+- GET `/disasters?tag=flood`
+- PUT/DELETE `/disasters/:id`
 
 ### 2. Geocoding (`geocode.py`)
 
-* POST `/geocode` → extract + convert location
+- POST `/geocode` → extract + convert location
 
 ### 3. Social Media (`social_media.py`)
 
-* GET `/disasters/:id/social-media` → mock social data + caching
+- GET `/disasters/:id/social-media` → mock social data + caching
 
 ### 4. Image Verification (`verify_image.py`)
 
-* POST `/disasters/:id/verify-image` → Gemini image verification API
+- POST `/disasters/:id/verify-image` → Gemini image verification API
 
 ### 5. Official Updates (`updates.py`)
 
-* GET `/disasters/:id/official-updates` → scrape Red Cross/FEMA with BeautifulSoup
+- GET `/disasters/:id/official-updates` → scrape Red Cross/FEMA with BeautifulSoup
 
 ---
 
@@ -89,21 +89,21 @@ CREATE INDEX disasters_location_idx ON disasters USING GIST (location);
 
 ### gemini.py
 
-* `extract_location_with_gemini(text)`
-* `verify_image_with_gemini(image_url)`
+- `extract_location_with_gemini(text)`
+- `verify_image_with_gemini(image_url)`
 
 ### geocoding.py
 
-* `get_coordinates(location_name)` → uses Mapbox/Google Maps API
+- `get_coordinates(location_name)` → uses Mapbox/Google Maps API
 
 ### cache.py
 
-* `get_cached_data(key)`
-* `set_cache_data(key, value)` with TTL check
+- `get_cached_data(key)`
+- `set_cache_data(key, value)` with TTL check
 
 ### scraper.py
 
-* `fetch_official_updates(url)`
+- `fetch_official_updates(url)`
 
 ---
 
@@ -111,8 +111,8 @@ CREATE INDEX disasters_location_idx ON disasters USING GIST (location);
 
 Use Pydantic to define:
 
-* DisasterSchema, ReportSchema, ResourceSchema
-* CacheSchema, VerificationSchema
+- DisasterSchema, ReportSchema, ResourceSchema
+- CacheSchema, VerificationSchema
 
 ---
 
@@ -120,18 +120,18 @@ Use Pydantic to define:
 
 Use Supabase Python SDK to:
 
-* Connect to DB
-* Run `insert`, `select`, and `update` functions
+- Connect to DB
+- Run `insert`, `select`, and `update` functions
 
 ---
 
 ## 🌐 Step 8: Main App (`main.py`)
 
-* Include all routers from `api/`
-* Load `.env` and connect DB
-* Setup WebSocket events:
+- Include all routers from `api/`
+- Load `.env` and connect DB
+- Setup WebSocket events:
 
-  * `disaster_updated`, `resources_updated`, `social_media_updated`
+  - `disaster_updated`, `resources_updated`, `social_media_updated`
 
 ---
 
@@ -139,14 +139,14 @@ Use Supabase Python SDK to:
 
 Use `websockets` or `fastapi-socketio`
 
-* Emit on disaster/resource changes
-* Broadcast to connected clients
+- Emit on disaster/resource changes
+- Broadcast to connected clients
 
 ---
 
 ## 🔐 Step 10: Mock Authentication
 
-* Hardcode users:
+- Hardcode users:
 
 ```python
 users = {
@@ -155,28 +155,28 @@ users = {
 }
 ```
 
-* Use request header `X-User: netrunnerX`
+- Use request header `X-User: netrunnerX`
 
 ---
 
 ## 🧪 Step 11: Testing
 
-* Use Postman or `static/index.html`
-* Test all endpoints manually
+- Use Postman or `static/index.html`
+- Test all endpoints manually
 
 ---
 
 ## 🚀 Step 12: Deployment
 
-* Backend → Render (use Gunicorn/Uvicorn)
-* Frontend (if made) → Vercel
+- Backend → Render (use Gunicorn/Uvicorn)
+- Frontend (if made) → Vercel
 
 ---
 
 ## 📝 Summary
 
-| Feature                      | Status     |
-| ---------------------------- | ---------- |
+| Feature                      | Status      |
+| ---------------------------- | ----------- |
 | Disaster CRUD                | ✅          |
 | Location Extraction (Gemini) | ✅          |
 | Geocoding                    | ✅          |
@@ -186,7 +186,7 @@ users = {
 | Browse Page Scraping         | ✅          |
 | Real-time Updates            | ✅          |
 | Auth + Roles                 | ✅          |
-| Minimal Frontend             | Optional   |
+| Minimal Frontend             | Optional    |
 
 ---
 
@@ -206,6 +206,7 @@ MAPBOX_API_KEY=your_key
 ## 🎯 Project Overview
 
 A backend-heavy platform that helps manage and respond to disasters. The system leverages:
+
 - 🌍 AI (Gemini) for extracting location data from text/image
 - 📍 Geocoding (OpenStreetMap)
 - 🗂️ Supabase for structured and geospatial storage
@@ -218,6 +219,7 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 ## ✅ What's Done (as of now)
 
 ### Core Features
+
 - [x] `disaster.py`: Full CRUD for disasters with Gemini location extraction
 - [x] `resource.py`: Add and fetch resources linked to disasters
 - [x] `geocode.py`: Geocoding using OpenStreetMap
@@ -231,11 +233,13 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 ---
 
 ### 📦 1. Push to GitHub (Version Control)
+
 - [ ] Initialize Git repo (if not done)
 - [ ] Push working code to GitHub
 - [ ] Add `.gitignore`, `README.md`, and `requirements.txt`
 
 ### 🧪 2. Testing
+
 - [ ] Add unit tests using `pytest` for:
   - [ ] `disaster.py`
   - [ ] `resource.py`
@@ -244,23 +248,24 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 - [ ] Mock external API calls (Gemini, HTTPX)
 
 ### 🔁 3. CI/CD (via GitHub Actions)
+
 - [ ] Create `.github/workflows/test.yml`
   - Run lint (`flake8`)
   - Run tests (`pytest`)
 - [ ] Auto-deploy to Render from GitHub
 
 ### 🌐 5. Deployment
+
 - [ ] Deploy Backend on **Render**
   - Add Supabase + Gemini keys
   - Add Render build & start commands
 
 ## 🧭 What’s Pending (Work Plan)
 
-
-
 ---
 
 ### 🐳 4. Dockerization
+
 - [ ] Create `Dockerfile`
 - [ ] Add `.dockerignore`
 - [ ] Test locally (`docker build`, `docker run`)
@@ -269,12 +274,14 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 ---
 
 ### 🌐 5. Deployment
+
 - [ ] Deploy Frontend (if created) on **Vercel**
 - [ ] Test deployed APIs via Postman
 
 ---
 
 ### 📡 6. WebSocket Integration (Real-Time)
+
 - [ ] Add a WebSocket route to broadcast updates
   - e.g., `ws://.../ws/disaster-updates`
 - [ ] Emit updates on disaster/resource insert/update
@@ -283,12 +290,14 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 ---
 
 ### 🔐 7. Basic Auth (Optional)
+
 - [ ] Use header-based mock authentication
 - [ ] Role-based access control for certain routes
 
 ---
 
 ### 🌈 8. Frontend (Optional but Recommended)
+
 - [ ] Minimal UI using React/Vite or HTML
 - [ ] Show disaster locations, social feeds, and image status
 - [ ] Connect via REST + WebSocket to backend
@@ -297,5 +306,7 @@ A backend-heavy platform that helps manage and respond to disasters. The system 
 
 ## 🗂️ Folder Structure
 
+Additions:-
 
-
+1. on ui while adding resource by id, all disaster ids must be show in drop down list.
+2. on adding resource by name, options should be shown in drop down list.
