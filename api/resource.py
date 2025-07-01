@@ -41,7 +41,7 @@ def get_resources_by_disaster_id(disaster_id:UUID):
 
 #get resource with the help of location_name
 #gets the location name converts into geopoint, finds the disaster id of disaster at that geopoint
-@router.get("/resources/{location_name}/resources")
+@router.get("resources/by-location/{location_name}")
 async def get_resources_by_name(location_name:str):
     latlon = await geocode.getCoord(location_name=location_name)
     if not latlon:

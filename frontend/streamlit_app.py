@@ -191,8 +191,26 @@ elif section == "Resources by Location":
     st.subheader("🌍 Find Resources Nearby")
     location_name = st.text_input("Enter Location Name")
     if st.button("Find Resources"):
-        res = requests.get(f"{BACKEND_URL}/resources/{location_name}/resources")
-        st.json(res.json())
+        if not location_name.strip():
+            st.warning("⚠️ Please enter a valid location name.")
+        else:
+            try:
+                res = requests.get(f"{BACKEND_URL}/resources/by-location/{location_name}")
+                if res.status_code == 200:
+                    data = res.json()
+                    resources = data.get("Resources", [])
+                    if resources:
+                        st.success(f"✅ Found {len(resources)} resources near '{location_name}'")
+                        for r in resources:
+                            with st.expander(f"📌 {r['name']} ({r['type']})"):
+                                st.json(r)
+                    else:
+                        st.info(f"No resources found near '{location_name}'")
+                else:
+                    error_msg = res.json().get("detail", "Something went wrong")
+                    st.error(f"❌ {error_msg}")
+            except Exception as e:
+                st.error(f"⚠️ Error: {str(e)}")
 
 
 elif section == "Social Media Posts":
